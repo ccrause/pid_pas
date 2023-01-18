@@ -12,7 +12,6 @@ type
     // PID parameters
     fOPmax, fOPmin: double;  // defaults to 0 - 1, or a fractional output
     fSP: double;
-
     fDerivativeFilterWeight, oldderiv: double;
     function getDerivativeFilterValue: double;
     procedure setDerivativeFilterValue(AValue: double);
@@ -47,9 +46,6 @@ type
     procedure initialize; override;
     procedure setParametersParallel(const Kp, Ki, Kd: double); override;
     procedure setParametersSeries(const Kp, Ti, Td: double); override;
-
-    //procedure setParameters(const proportional, integral, derivative: double); override;
-    //procedure setParametersStandard(const Kp, Ti, Td: double);
     // PV = process value, deltaT is time step from previous iteration
     function calcOP(const PV, deltaT: double): double; override;
     // Reset error history to 0, call e.g. when restarting controller
@@ -57,12 +53,7 @@ type
   end;
 
   { TPIDcontroller2 }
-  // Basic discrete calculation of output (with process value used for derivative term):
-  //   OP[k] = Kp*err[k] + Ki*sum(err[j]*deltaT) + Kd*(PV[k] - PV[k-1])/deltaT
-  // Calculate difference between previous and current output
-  //    OP[k] - OP[k-1] = Kp*(err[k] - err[k-1]) +
-  //                      Ki*err[k]*deltaT +
-  //                      Kd*(PV[k] - 2*PV[k-1] + PV[k-2]) / deltaT
+
   TPIDcontroller2 = class(TPIDcontrollerBase)
   private
     // PID parameters
@@ -103,6 +94,9 @@ begin
   fError[2] := 0;
   fDerivative[0] := 0;
   fDerivative[1] := 0;
+  fPV[0] := 0;
+  fPV[1] := 0;
+  fPV[2] := 0;
 end;
 
 procedure TPIDcontroller2.setParametersParallel(const Kp, Ki, Kd: double);
@@ -129,10 +123,10 @@ function TPIDcontroller2.calcOP(const PV, deltaT: double): double;
 begin
   fError[2] := fError[1];
   fError[1] := fError[0];
-  if abs(fSP) < 1e-3 then
-    fError[0] := (fSP - PV)
+  if abs(fSP) > 1 then
+    fError[0] := 1 - PV/fSP
   else
-    fError[0] := 2*(fSP - PV)/(abs(fSP) + abs(PV));
+    fError[0] := (fSP - PV);
 
   fIntegralError := deltaT*(fError[0] + fError[1])/2;
 
@@ -141,17 +135,14 @@ begin
   fPV[0] := PV;
   fDerivative[1] := fDerivative[0];
   fDerivative[0] := -(fPV[0] - 2*fPV[1] + fPV[2])/deltaT;
+  if abs(fSP) > 1 then
+    fDerivative[0] := fDerivative[0] / fSP;
   fDerivative[0] := (1-fDerivativeFilterWeight)*fDerivative[0] +
                     fDerivativeFilterWeight*fDerivative[1];
 
   Result := fOP[0] + fKp*(fError[0] - fError[1])
             + fKi*fIntegralError
             + fKd*fDerivative[0];
-
-  //Result := fOP[0] +
-  //        (fKp + fKi*deltaT/2 + fKd/deltaT) * fError[0] +
-  //        (-fKp + fKi*deltaT/2 - 2*fKd/deltaT) * fError[1] +
-  //        fKd/deltaT*fError[2];
 
   // Apply output clamping if set
   if not(fOPmin = fOPmax) then
@@ -179,41 +170,6 @@ begin
   fError[1] := 0;
   fError[2] := 0;
 end;
-
-//function TPIDcontrollerStandard.calcOP(const PV, deltaT: double): double;
-//var
-//  err: double;
-//begin
-//  //fOP, fE1, fE2: double;
-//  if abs(fSP) < 1e-3 then
-//    err := (fSP - PV)
-//  else
-//    err := 0.5*(fSP - PV)/(abs(fSP) + abs(PV));
-//
-//  Result := fOP + fKp(1 + deltaT/(2*fTi) + fTd/deltaT) * err +
-//            (-fKp + fKi*deltaT/2 - 2*fKd/deltaT) * fE1 +
-//            fKd/deltaT*fE2;
-//
-//  fOP := Result;
-//
-//  // Apply output clamping if set
-//  if not(fOPmin = fOPmax) then
-//  begin
-//    if Result > fOPmax then
-//      Result := fOPmax
-//    else if Result < fOPmin then
-//      Result := fOPmin;
-//
-//  if fOP > 2*fOPMax then
-//    fOP := 2*fOPMax
-//  else if fOP < fOPMin then
-//    fOP := fOPMin;
-//  end;
-//
-//  fE2 := fE1;
-//  fE1 := err;
-//  //fOP := Result;
-//end;
 
 { TPIDcontrollerBase }
 
@@ -255,6 +211,7 @@ begin
   fOPmin := 0;
   // Discrete storage
   fOP := 0;
+  fPVold := 0;
 end;
 
 procedure TPIDcontroller1.setParametersParallel(const Kp, Ki, Kd: double);
@@ -283,12 +240,10 @@ function TPIDcontroller1.calcOP(const PV, deltaT: double): double;
 var
   err, deriv: double;
 begin
-  // Scale error and derivative
-  // Prevent problems when scale is close to 0
-  if abs(fSP) < 1e-3 then
-    err := 0
+  if abs(fSP) > 1 then
+    err := 1 - PV/fSP
   else
-    err := 2*(fSP - PV) / (abs(fSP) + abs(PV));
+    err := (fSP - PV);
 
   fIntegralError := fIntegralError + err*deltaT;
   if fIntegralErrorClamp > 0 then
@@ -300,8 +255,10 @@ begin
   end;
 
   deriv := (fPVold - PV) / deltaT;
+  if abs(fSP) > 1 then
+    deriv := deriv / fSP;
+
   fPVold := PV;
-  // Filter derivative, helps when PV is noisy
   deriv := oldderiv*(fDerivativeFilterWeight) + (1-fDerivativeFilterWeight)*deriv;
 
   Result := fKp * err +             // Proportional term
