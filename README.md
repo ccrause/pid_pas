@@ -30,15 +30,15 @@ The derivative term $D(k)$ is sensitive to measurement noise of the $PV$. To lim
 ```math
 \begin{gather}
 D_{filtered}(k) = \alpha D(k-1) + (1-\alpha)D(k) \\
-0 < \alpha < 1 
+0 \leq \alpha < 1 
 \end{gather}
 ```
-The filtered derivate term $D_{filtered}(k)$ is then used when calculating the output of the PID controller.
+The filtered derivate term $D_{filtered}(k)$ is then used when calculating the output of the PID controller.  Note that when large values for $Kd$ are used, the output of the PID controller can oscillate even if little or no noise is present in the $PV$. This type of oscillations can to some extend be  eliminated by specifying an $\alpha$ value close to 1.
   
 ### Series (or standard) form of PID
 The series (or standard) form of a proportional - integral - derivate controller is:
 ```math
-OP(t) = Kg \left( \epsilon (t) + \frac{1}{Ti}\int_0^t \epsilon (t) \partial t + Td.\frac{\partial \epsilon (t)}{\partial t}\right) \big|_{SP=const})
+OP(t) = Kg \left( \epsilon (t) + \frac{1}{Ti}\int_0^t \epsilon (t) \partial t + Td.\frac{\partial \epsilon (t)}{\partial t}\right)
 ```
 This is mathematically identical to the first equation, with the gain calculated as $Kg = Kp$, the integral reset time calculated as $Ti = \frac{Kp}{Ki}$ and the integration time is calculated as $Td = Kp.Kd$.  This form is often used in industry, hence the option is available to specify the PID settings in this form.  Internally the parameters are converted to the equivalent parallel form and solved via equations above.
 
@@ -47,3 +47,4 @@ An alternative formulation for solving the PID equation is to use equation 2 and
 ```math
 OP(k) = OP(k-1) + Kp.(\epsilon (k) - \epsilon (k-1)) + Ki.\epsilon (k) \Delta t + Kd. \left( \frac{D(k) - D(k-1)}{\Delta t}\right)
 ```
+
