@@ -148,7 +148,7 @@ object Form1: TForm1
         Width = 100
         Anchors = [akTop, akRight]
         TabOrder = 0
-        Text = '0.1'
+        Text = '2'
       end
       object ProportionalLabel: TLabel
         Left = 7
@@ -190,7 +190,7 @@ object Form1: TForm1
         Width = 100
         Anchors = [akTop, akRight]
         TabOrder = 2
-        Text = '0'
+        Text = '120'
       end
       object DerivativeLabel1: TLabel
         Left = 7
@@ -207,7 +207,7 @@ object Form1: TForm1
         Width = 100
         Anchors = [akTop, akRight]
         TabOrder = 3
-        Text = '0'
+        Text = '0.9'
       end
     end
     object SimulateButton: TButton
