@@ -154,16 +154,16 @@ object Form1: TForm1
         Left = 7
         Height = 16
         Top = 8
-        Width = 16
-        Caption = 'Kp'
+        Width = 28
+        Caption = 'Kp, s'
         ParentColor = False
       end
       object IntegalLabel: TLabel
         Left = 7
         Height = 16
         Top = 38
-        Width = 11
-        Caption = 'Ki'
+        Width = 53
+        Caption = 'Ki, 1/s/°C'
         ParentColor = False
       end
       object KiEdit: TEdit
@@ -179,8 +179,8 @@ object Form1: TForm1
         Left = 7
         Height = 16
         Top = 68
-        Width = 16
-        Caption = 'Kd'
+        Width = 45
+        Caption = 'Kd, s/°C'
         ParentColor = False
       end
       object KdEdit: TEdit

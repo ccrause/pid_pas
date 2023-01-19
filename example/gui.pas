@@ -126,15 +126,17 @@ begin
 end;
 
 procedure TForm1.PIDTypeRadioGroupSelectionChanged(Sender: TObject);
+const
+  rounding = 100000;
 var
   p, i, d: double;
 begin
   case PIDTypeRadioGroup.ItemIndex of
     0:
     begin
-      ProportionalLabel.Caption := 'Kp';
-      IntegalLabel.Caption := 'Ki';
-      DerivativeLabel.Caption := 'Kd';
+      ProportionalLabel.Caption := 'Kp, 1/°C';
+      IntegalLabel.Caption := 'Ki, 1/s/°C';
+      DerivativeLabel.Caption := 'Kd, s/°C';
       // Convert from series form
       p := StrToFloat(KpEdit.Text);
       i := StrToFloat(KiEdit.Text);
@@ -143,28 +145,28 @@ begin
       if abs(i) < 1e-4 then
         i := sign(i)*1e-4;
       // Ki = Kp/Ti
-      KiEdit.Text := FloatToStr(round(10000*p/i)/10000);
+      KiEdit.Text := FloatToStr(round(rounding*p/i)/rounding);
       // Kd = Kp*Td
-      KdEdit.Text := FloatToStr(round(10000*p*d)/10000);
+      KdEdit.Text := FloatToStr(round(rounding*p*d)/rounding);
     end;
     1:
     begin
-      ProportionalLabel.Caption := 'Kp';
-      IntegalLabel.Caption := 'Ti';
-      DerivativeLabel.Caption := 'Td';
+      ProportionalLabel.Caption := 'Kp, 1/°C';
+      IntegalLabel.Caption := 'Ti, s';
+      DerivativeLabel.Caption := 'Td, s';
       // Convert from series form
       p := StrToFloat(KpEdit.Text);
       i := StrToFloat(KiEdit.Text);
       d := StrToFloat(KdEdit.Text);
       // Clamp Kp, Ki to prevent division by zero
-      if abs(p) < 1e-4 then
-        i := sign(p)*1e-4;
+      if abs(p) < 1/rounding then
+        i := sign(p)/rounding;
       if abs(i) < 1e-4 then
-        i := sign(i)*1e-4;
+        i := sign(i)/rounding;
       // Ti = Kp/Ki
-      KiEdit.Text := FloatToStr(round(10000*p/i)/10000);
+      KiEdit.Text := FloatToStr(round(rounding*p/i)/rounding);
       // Td = Kd/Kp
-      KdEdit.Text := FloatToStr(round(10000*d/p)/10000);
+      KdEdit.Text := FloatToStr(round(rounding*d/p)/rounding);
     end;
   end;
 end;
