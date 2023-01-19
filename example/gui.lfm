@@ -279,8 +279,8 @@ object Form1: TForm1
       Columns = 2
       ItemIndex = 0
       Items.Strings = (
-        'Simple'
-        'Fancy'
+        'Form 1'
+        'Form 2'
       )
       TabOrder = 5
     end
