@@ -17,4 +17,7 @@ Q_{conv} - \text{Convective heat transfer between object and environment} \\
 Q_{heater} - \text{Heat output of heater} \\
 \end{gather}
 ```
+This model is very simplified and neglects many details such as shape of the object, heat conduction through the object, variation of heat capcity with temperature and so forth.  It does however give a realistic response for testing PID settings.
 
+## Temperature noise
+In the application includes an option to add random noise to the reported temperature of the object, to simulate a noisy measurement and its effect on controller robustness.
