@@ -35,7 +35,7 @@ D_{filtered}(k) = \alpha D(k-1) + (1-\alpha)D(k) \tag{6} \label{eq:6} \\
 ```
 The filtered derivate term $D_{filtered}(k)$ is then used when calculating the output of the PID controller.  Note that when large values for $Kd$ are used, the output of the PID controller can oscillate even if little or no noise is present in the $PV$. This type of oscillations can to some extend be  eliminated by specifying an $\alpha$ value close to 1.
   
-### Series (or standard) form of PID
+### Standard form of PID
 The series (or standard) form of a proportional - integral - derivate controller is:
 ```math
 OP(t) = Kg \left( \epsilon (t) + \frac{1}{Ti}\int_0^t \epsilon (t) \partial t + Td.\frac{\partial \epsilon (t)}{\partial t}\right) \tag{7} \label{eq:7}

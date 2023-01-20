@@ -255,7 +255,7 @@ object Form1: TForm1
       ItemIndex = 0
       Items.Strings = (
         'Parallel'
-        'Series'
+        'Standard'
       )
       OnSelectionChanged = PIDTypeRadioGroupSelectionChanged
       TabOrder = 4

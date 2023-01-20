@@ -190,7 +190,7 @@ begin
   if PIDTypeRadioGroup.ItemIndex = 0 then
     PID.setParametersParallel(Kp, integral, derivative)
   else
-    PID.setParametersSeries(Kp, integral, derivative);
+    PID.setParametersStandard(Kp, integral, derivative);
   PID.DerivativeFilterValue := StrToFloat(DerivativeFilterWeightEdit.Text);
   Tnoise := StrToFloat(TnoiseEdit.Text);
 end;

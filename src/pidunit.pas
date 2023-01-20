@@ -19,7 +19,7 @@ type
     // Just set integral error = 0
     procedure initialize; virtual; abstract;
     procedure setParametersParallel(const Kp, Ki, Kd: double); virtual; abstract;
-    procedure setParametersSeries(const Kp, Ti, Td: double); virtual; abstract;
+    procedure setParametersStandard(const Kp, Ti, Td: double); virtual; abstract;
     procedure newSetpoint(const SP: double);
     // PV = process value, deltaT is time step from previous iteration
     function calcOP(const PV, deltaT: double): double; virtual; abstract;
@@ -45,7 +45,7 @@ type
     // Just set integral error = 0
     procedure initialize; override;
     procedure setParametersParallel(const Kp, Ki, Kd: double); override;
-    procedure setParametersSeries(const Kp, Ti, Td: double); override;
+    procedure setParametersStandard(const Kp, Ti, Td: double); override;
     // PV = process value, deltaT is time step from previous iteration
     function calcOP(const PV, deltaT: double): double; override;
     // Reset error history to 0, call e.g. when restarting controller
@@ -68,7 +68,7 @@ type
     // Just set integral error = 0
     procedure initialize; override;
     procedure setParametersParallel(const Kp, Ki, Kd: double); override;
-    procedure setParametersSeries(const Kp, Ti, Td: double); override;
+    procedure setParametersStandard(const Kp, Ti, Td: double); override;
     // PV = process value, deltaT is time step from previous iteration
     function calcOP(const PV, deltaT: double): double; override;
     // Reset error history to 0, call e.g. when restarting controller
@@ -106,7 +106,7 @@ begin
   fKd := Kd;
 end;
 
-procedure TPIDcontroller2.setParametersSeries(const Kp, Ti, Td: double);
+procedure TPIDcontroller2.setParametersStandard(const Kp, Ti, Td: double);
 var
   Ki, Kd: double;
 begin
@@ -222,7 +222,7 @@ begin
   fIntegralErrorClamp := fOPmax / fKi;
 end;
 
-procedure TPIDcontroller1.setParametersSeries(const Kp, Ti,
+procedure TPIDcontroller1.setParametersStandard(const Kp, Ti,
   Td: double);
 var
   Ki, Kd: double;
