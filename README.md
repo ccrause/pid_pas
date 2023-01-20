@@ -43,7 +43,7 @@ OP(t) = Kg \left( \epsilon (t) + \frac{1}{Ti}\int_0^t \epsilon (t) \partial t + 
 This is mathematically identical to the first equation, with the gain calculated as $Kg = Kp$, the integral reset time calculated as $Ti = \frac{Kp}{Ki}$ and the integration time is calculated as $Td = Kp.Kd$.  This form is often used in industry, hence the option is available to specify the PID settings in this form.  Internally the parameters are converted to the equivalent parallel form and solved via equations above.
 
 ## Derivation of discrete form (2)
-An alternative formulation for solving the PID equation is to use equation 2 and calculate the difference between timestep $k$ and $k-1$:
+An alternative formulation for solving the PID equation is to use equation $\ref{eq:2}$ and calculate the difference between timestep $k$ and $k-1$:
 ```math
 OP(k) = OP(k-1) + Kp.(\epsilon (k) - \epsilon (k-1)) + Ki.\epsilon (k) \Delta t + Kd. \left( \frac{D(k) - D(k-1)}{\Delta t}\right) \tag{8} \label{eq:8}
 ```
